@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <title>社区发现</title>
     <style>
@@ -29,16 +30,21 @@
         }
         
         .waterfall {
-            /* display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            align-items: start;  */
-             column-count: 2;     /* 固定两列 */
-             column-gap: 16px;
+          display: flex;
+            gap: 16px;
+             
         }
+
+        .column {
+            flex: 1; /* 等分宽度 */
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            }
 
 
         .card {
+            width: 100%;
             break-inside: avoid; /* 防止项目被断开显示在不同列 */
             margin-bottom: 16px; /* 每个卡片底部留白 */
             display: inline-block; /* 关键：让元素适应列宽 */
@@ -207,8 +213,12 @@
         /* 响应式设计 */
         
         @media (max-width: 480px) {
-            .waterfall {
-                grid-template-columns: 1fr;
+          .card  p {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3; /* 限制显示3行 */
+            overflow: hidden;
+            text-overflow: ellipsis; /* 超出部分显示省略号 */
             }
         
         }
@@ -217,18 +227,23 @@
 <body>
 
     
-    <div class="refresh-indicator" id="refreshIndicator">
-        <i class="fas fa-sync-alt fa-spin"></i> 正在刷新...
-    </div>
-    
     <div class="container">
-        <div class="waterfall" id="waterfall"></div>
+        <div class="waterfall" id="waterfall">
+            <div id="leftcolumn" class="column">
+            </div>
+            <div id="rightcolumn" class="column">
+            </div>
+        </div>
         <div class="loader" id="loader">
             <i class="fas fa-spinner fa-spin"></i> 正在加载更多内容...
         </div>
     </div>
-    
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pulltorefreshjs/0.1.22/index.umd.js"></script>
     <script>
+
+
         // 模拟API数据
         const mockData = {
             // 默认数据
@@ -288,7 +303,19 @@
                     content: '端午安康各位，浅更',
                     url:'https://bs-community.233leyuan.com/community/post/f18fdacbd410496cbf7693f874eea303_514661086.mp4',
                     username: '技术大牛',
-                    time: '4小时前',
+                    time: '4天前',
+                    likes: 2100,
+                    comments: 345,
+                    shares: 520
+                },
+                {
+                    id: 6,
+                    type: 'image',
+                    title: ' 鹅鸭杀（国际服）游戏进入说明',
+                    content: '这款海外/国际服 游戏需要使用加速器才能正常游玩运行，小伙伴们可以通过以下方法来玩到自己想玩的游戏：1.在233乐园内搜索【奇游加速器】或点击下方插卡安装加速器软件（加速器已通过安全监测，请放心安装）2.在奇游加速器搜鹅鸭杀，点击下载3.在加速栏找到自己想玩的游戏，点击加速，就能进入游玩啦~一图流...',
+                    url:'https://community.233leyuan.com/community/post/5af98aad38054d3eaef2248bbd2fb22f_428935667.jpg',
+                    username: '技术大牛',
+                    time: '5天前',
                     likes: 2100,
                     comments: 345,
                     shares: 520
@@ -300,9 +327,10 @@
                 {
                     id: 101,
                     type: 'image',
-                    title: '日出时分的山顶美景',
-                    content: '凌晨4点开始登山，终于赶上了最美的日出时刻',
-                    username: '登山爱好者',
+                    title: ' 微氪，有人一起玩吗',
+                    content: '',
+                    url: 'https://community.233leyuan.com/community/post/b75e37437c3c49708b31650807c3d47f_522048231.webp',
+                    username: '爱好者',
                     time: '8小时前',
                     likes: 320,
                     comments: 45,
@@ -310,10 +338,11 @@
                 },
                 {
                     id: 102,
-                    type: 'video',
-                    title: '健身入门训练计划',
-                    content: '适合新手的家庭健身方案，无需器械',
-                    username: '健身教练',
+                    type: 'image',
+                    title: '蛋仔派对领',
+                    content: '寻找宝宝计划年龄9~12岁   十好友送各种皮皮礼物  要听话要有素质  不要伪装宝宝蛋。（快手的优先送',
+                    url:'https://community.233leyuan.com/community/post/424457fab6ca47b98b62ee499740c8fb_511584766.webp',
+                    username: '用户123',
                     time: '1天前',
                     likes: 1560,
                     comments: 210,
@@ -321,11 +350,12 @@
                 },
                 {
                     id: 103,
-                    type: 'image',
-                    title: '咖啡拉花艺术展示',
-                    content: '练习了一个月的成果，分享我的咖啡拉花作品',
+                    type: 'video',
+                    title: ' 【蛋仔卡点】“我们永远.”',
+                    content: '地图名:当幸福降临#申请精华#申请周刊',
+                    url:"https://bs-community.233leyuan.com/community/post/8cb23b04774548c49bb6e486e0d9e98a_522055952.mp4",
                     username: '咖啡师',
-                    time: '6小时前',
+                    time: '2天前',
                     likes: 780,
                     comments: 92,
                     shares: 65
@@ -333,9 +363,10 @@
                 {
                     id: 104,
                     type: 'image',
-                    title: '手工皮具制作过程',
-                    content: '从设计到成品，手工打造一个真皮钱包',
-                    username: '手工艺人',
+                    title: '【有奖话题】分享你最喜爱的甜品，赢惊喜奖励',
+                    content: '新赛季甜品甜品甜品upup，看的奶茶都疯狂了！过两天就要高考啦，奶茶在这里祝大家金榜题名，高考加油！在评论区分享你最喜欢的甜品即可示例：奶茶~当然喜欢奶茶啦，那你要问哪家的奶茶，我只能说——来者不拒同期活动：可获得新赛季盲盒十连抽（点击此处参与）2025年6月6日——2025年6月15日随机抽2位',
+                    url:'https://community.233leyuan.com/community/post/ebb0c7db5ff54a66ae0f78255c4fa0cf_520378322.webp',
+                    username: '奶茶',
                     time: '2天前',
                     likes: 420,
                     comments: 76,
@@ -347,9 +378,10 @@
             type2: [
                 {
                     id: 201,
-                    type: 'video',
-                    title: '城市骑行路线推荐',
-                    content: '避开拥挤交通，探索城市的最佳骑行路线',
+                    type: 'image',
+                    title: ' 太爽了忍3太良心了',
+                    content: '欧皇附体爽了#233穿搭独家爆料 ',
+                    url:'https://community.233leyuan.com/community/post/0a418aa595b94017ac33a1ee55f2f9ba_505678435.webp',
                     username: '城市骑手',
                     time: '3小时前',
                     likes: 890,
@@ -358,9 +390,10 @@
                 },
                 {
                     id: 202,
-                    type: 'image',
-                    title: '水彩画入门教程',
-                    content: '零基础也能学会的水彩画技巧分享',
+                    type: 'video',
+                    title: '第一次做视频有可能不太好，大家不要笑话',
+                    content: '不知道录什么？所以录了一把排位赛，结果输了，大家不要笑我',
+                    url:'https://bs-community.233leyuan.com/community/post/7e473cf47af344d59c38ce00dcfd8ed6_521147981.mp4',
                     username: '艺术创作',
                     time: '1天前',
                     likes: 670,
@@ -369,21 +402,23 @@
                 },
                 {
                     id: 203,
-                    type: 'video',
-                    title: '智能家居改造方案',
-                    content: '低成本将普通家居升级为智能家居',
-                    username: '科技生活',
-                    time: '5小时前',
+                    type: 'image',
+                    title: '大保底又要来了，什么抽奖机制？',
+                    content: '',
+                    url:'https://community.233leyuan.com/community/post/7ef0e6146be74450b4370aefb514e63f_505024330.webp',
+                    username: '玩疯了',
+                    time: '1天前',
                     likes: 1450,
                     comments: 230,
                     shares: 380
                 },
                 {
                     id: 204,
-                    type: 'image',
-                    title: '阳台小花园改造',
-                    content: '5平米阳台变身小花园，都市中的绿色空间',
-                    username: '园艺达人',
+                    type: 'image ',
+                    title: '欧气爆棚了哈',
+                    content: '单抽出水鹤',
+                    url:'https://community.233leyuan.com/community/post/949d8d4941454ab7b9fad2d2744474c5_520623037.webp',
+                    username: '禁伸手党',
                     time: '2天前',
                     likes: 920,
                     comments: 145,
@@ -392,6 +427,7 @@
             ]
         };
         
+
 
         
         // 获取URL参数
@@ -413,17 +449,7 @@
             }
         }
         
-        // 生成随机图片URL
-        function getRandomImageUrl() {
-            const index = Math.floor(Math.random() * imageUrls.length);
-            return imageUrls[index] + '?auto=format&fit=crop&w=600&h=400&q=80';
-        }
-        
-        // 生成随机视频URL
-        function getRandomVideoUrl() {
-            const index = Math.floor(Math.random() * videoUrls.length);
-            return videoUrls[index];
-        }
+
         
         // 生成用户头像
         function generateAvatar(name) {
@@ -485,41 +511,52 @@
         
         // 渲染瀑布流
         function renderWaterfall(data) {
-            const waterfall = document.getElementById('waterfall');
-            
-            data.forEach(item => {
+       
+            data.forEach((item, index) => {
                 const card = renderCard(item);
-                waterfall.appendChild(card);
+                if (index % 2 === 0) {
+                    const column = document.getElementById('leftcolumn');
+                    column.appendChild(card);
+                } else {
+                    const column = document.getElementById('rightcolumn');
+                    column.appendChild(card);
+                }
             });
             
         }
 
         
         // 上拉加载更多
-        function setupInfiniteScroll() {
+       function setupInfiniteScroll() {
             const loader = document.getElementById('loader');
             let isLoading = false;
-            
+
             const observer = new IntersectionObserver((entries) => {
                 if (entries[0].isIntersecting && !isLoading) {
                     isLoading = true;
-                    loader.style.display = 'block';
-                    
+                    loader.style.visibility = 'visible'; // 替换 display: block
+                    loader.style.opacity = '1';
+
                     // 模拟API请求延迟
                     setTimeout(() => {
                         const params = getUrlParams();
                         const moreData = getDataByParams(params);
-                        
-                        // 每次加载3条数据
+
+                        // 每次加载4条数据
                         const newData = [];
-                        for (let i = 0; i < 3; i++) {
+                        for (let i = 0; i < 4; i++) {
                             const randomIndex = Math.floor(Math.random() * moreData.length);
-                            newData.push({...moreData[randomIndex], id: Date.now() + i});
+                            newData.push({ ...moreData[randomIndex], id: Date.now() + i });
                         }
-                        
+
                         renderWaterfall(newData);
-                        loader.style.display = 'none';
+                        loader.style.visibility = 'hidden'; 
+                        loader.style.opacity = '0';
                         isLoading = false;
+
+                        // 可选：重新 observe 以确保下一次检测生效
+                        observer.unobserve(loader);
+                        observer.observe(loader);
                     }, 1500);
                 }
             }, {
@@ -527,69 +564,10 @@
                 rootMargin: '0px',
                 threshold: 0.1
             });
-            
+
             observer.observe(loader);
         }
-        
-        // 下拉刷新
-        function setupPullToRefresh() {
-            const refreshIndicator = document.getElementById('refreshIndicator');
-            let startY = 0;
-            let currentY = 0;
-            let isRefreshing = false;
-            
-            document.addEventListener('touchstart', e => {
-                if (window.scrollY === 0 && !isRefreshing) {
-                    startY = e.touches[0].pageY;
-                }
-            });
-            
-            document.addEventListener('touchmove', e => {
-                if (window.scrollY === 0 && !isRefreshing) {
-                    currentY = e.touches[0].pageY;
-                    
-                    const pullDistance = currentY - startY;
-                    
-                    if (pullDistance > 0) {
-                        e.preventDefault();
-                        refreshIndicator.style.display = 'block';
-                        refreshIndicator.style.transform = `translateY(${Math.min(pullDistance, 100)}px)`;
-                        
-                        if (pullDistance > 100) {
-                            refreshIndicator.innerHTML = '<i class="fas fa-sync-alt fa-spin"></i> 释放刷新';
-                        } else {
-                            refreshIndicator.innerHTML = '<i class="fas fa-sync-alt fa-spin"></i> 下拉刷新';
-                        }
-                    }
-                }
-            });
-            
-            document.addEventListener('touchend', e => {
-                if (window.scrollY === 0 && !isRefreshing) {
-                    const pullDistance = currentY - startY;
-                    
-                    if (pullDistance > 100) {
-                        isRefreshing = true;
-                        refreshIndicator.innerHTML = '<i class="fas fa-sync-alt fa-spin"></i> 正在刷新...';
-                        
-                        // 模拟刷新数据
-                        setTimeout(() => {
-                            const waterfall = document.getElementById('waterfall');
-                            waterfall.innerHTML = '';
-                            
-                            const params = getUrlParams();
-                            const data = getDataByParams(params);
-                            renderWaterfall(data);
-                            
-                            refreshIndicator.style.display = 'none';
-                            isRefreshing = false;
-                        }, 1500);
-                    } else {
-                        refreshIndicator.style.display = 'none';
-                    }
-                }
-            });
-        }
+
         
         // 初始化页面
         function init() {
@@ -597,20 +575,24 @@
             const data = getDataByParams(params);
             renderWaterfall(data);
             setupInfiniteScroll();
-            setupPullToRefresh();
-            
-            // 添加标签切换事件
-            const tabs = document.querySelectorAll('.tab');
-            tabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    tabs.forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                });
-            });
         }
         
         // 页面加载完成后初始化
-        document.addEventListener('DOMContentLoaded', init);
+        document.addEventListener('DOMContentLoaded', function() {
+            init();
+            PullToRefresh.init({
+                mainElement: 'body',
+                onRefresh: function() {
+                    window.location.reload();
+                },
+                distThreshold: 60, // 触发刷新的最小距离(px)
+                distMax: 80, // 最大下拉距离(px)
+                instructionsPullToRefresh: '下拉刷新', // 下拉提示文本
+                instructionsReleaseToRefresh: '释放刷新', // 释放提示文本
+                instructionsRefreshing: '刷新中...', // 刷新中提示文本
+            });
+        });
+
     </script>
 </body>
 </html>
