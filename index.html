@@ -102,8 +102,8 @@
             left: 50%;
             transform: translate(-50%, -50%);
             background: rgba(0, 0, 0, 0.7);
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -212,7 +212,7 @@
         
         /* 响应式设计 */
         
-        @media (max-width: 480px) {
+        @media (max-width: 768px) {
           .card  p {
             display: -webkit-box;
             -webkit-box-orient: vertical;
@@ -268,7 +268,7 @@
                     url:'https://bs-community.233leyuan.com/community/post/68d1191ed8f242eda7f198fda0c804ad_509637984.mp4',
                     username: '达人',
                     time: '5小时前',
-                    likes: 1200,
+                    likes: 120,
                     comments: 186,
                     shares: 340
                 },
@@ -304,7 +304,7 @@
                     url:'https://bs-community.233leyuan.com/community/post/f18fdacbd410496cbf7693f874eea303_514661086.mp4',
                     username: '技术大牛',
                     time: '4天前',
-                    likes: 2100,
+                    likes: 210,
                     comments: 345,
                     shares: 520
                 },
@@ -316,7 +316,7 @@
                     url:'https://community.233leyuan.com/community/post/5af98aad38054d3eaef2248bbd2fb22f_428935667.jpg',
                     username: '技术大牛',
                     time: '5天前',
-                    likes: 2100,
+                    likes: 200,
                     comments: 345,
                     shares: 520
                 }
@@ -344,7 +344,7 @@
                     url:'https://community.233leyuan.com/community/post/424457fab6ca47b98b62ee499740c8fb_511584766.webp',
                     username: '用户123',
                     time: '1天前',
-                    likes: 1560,
+                    likes: 156,
                     comments: 210,
                     shares: 430
                 },
@@ -408,7 +408,7 @@
                     url:'https://community.233leyuan.com/community/post/7ef0e6146be74450b4370aefb514e63f_505024330.webp',
                     username: '玩疯了',
                     time: '1天前',
-                    likes: 1450,
+                    likes: 145,
                     comments: 230,
                     shares: 380
                 },
@@ -466,9 +466,12 @@
                 mediaHtml = `
                     <div class="media-container">
                         <div class="video-container">
-                            <video controls>
+                            <video >
                                 <source src="${item.url}" type="video/mp4">
                             </video>
+                            <div class="play-btn">
+                                <i class="fas fa-play"></i>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -508,6 +511,34 @@
             
             return card;
         }
+
+          // 设置视频播放器
+        function setupVideoPlayers() {
+            const playButtons = document.querySelectorAll('.play-btn');
+            
+            playButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const videoContainer = this.parentElement;
+                    const video = videoContainer.querySelector('video');
+                    
+                    if (video.paused) {
+                        video.play();
+                        this.innerHTML = '<i class="fas fa-pause"></i>';
+                        // Request fullscreen on play for small screens
+                        if (window.innerWidth < 768) { // Adjust the screen width threshold as needed
+                            if (video.requestFullscreen) {
+                                video.requestFullscreen();
+                            } else if (video.webkitRequestFullscreen) { /* Safari */
+                                video.webkitRequestFullscreen();
+                            }
+                        }
+                    } else {
+                        video.pause();
+                        this.innerHTML = '<i class="fas fa-play"></i>';
+                    }
+                });
+            });
+        }
         
         // 渲染瀑布流
         function renderWaterfall(data) {
@@ -522,6 +553,8 @@
                     column.appendChild(card);
                 }
             });
+            // 添加视频播放事件
+            setupVideoPlayers();
             
         }
 
