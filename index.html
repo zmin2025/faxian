@@ -209,7 +209,33 @@
             background: #f5f7fa;
             display: none;
         }
-        
+
+        #videobox {
+            display: none;
+            position: fixed;
+            left: 0rem;
+            right: 0rem;
+            top: 0rem;
+            bottom: 0rem;
+            background: rgba(0, 0, 0, .3);
+            z-index: 999;
+        }
+        .video_div{
+            background: #FFFFFF;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 0.3rem;
+             border-radius: 12px;
+            width: 90%;
+        }
+        .close_anniu{
+            text-align: right;
+        }
+        .close_anniu i{
+            cursor: pointer;font-weight: bold;color: #1658A0;padding: 5px;
+        }
         /* 响应式设计 */
         
         @media (max-width: 768px) {
@@ -237,6 +263,7 @@
         <div class="loader" id="loader">
             <i class="fas fa-spinner fa-spin"></i> 正在加载更多内容...
         </div>
+        <div id="videobox"></div>
     </div>
 
 
@@ -465,7 +492,7 @@
             if (item.type === 'video') {
                 mediaHtml = `
                     <div class="media-container">
-                        <div class="video-container">
+                        <div class="video-container" onclick="setupVideoPlayers('${item.url}')">
                             <video >
                                 <source src="${item.url}" type="video/mp4">
                             </video>
@@ -513,31 +540,29 @@
         }
 
           // 设置视频播放器
-        function setupVideoPlayers() {
-            const playButtons = document.querySelectorAll('.play-btn');
-            
-            playButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const videoContainer = this.parentElement;
-                    const video = videoContainer.querySelector('video');
-                    
-                    if (video.paused) {
-                        video.play();
-                        this.innerHTML = '<i class="fas fa-pause"></i>';
-                        // Request fullscreen on play for small screens
-                        if (window.innerWidth < 768) { // Adjust the screen width threshold as needed
-                            if (video.requestFullscreen) {
-                                video.requestFullscreen();
-                            } else if (video.webkitRequestFullscreen) { /* Safari */
-                                video.webkitRequestFullscreen();
-                            }
-                        }
-                    } else {
-                        video.pause();
-                        this.innerHTML = '<i class="fas fa-play"></i>';
-                    }
-                });
-            });
+        function setupVideoPlayers(url) {
+            const videohtml = `
+                <div class="video_div">
+                    <div class="close_anniu" style="top: 0;">
+                        <i class="fas fa-remove" onclick="closevideo()"></i>
+                    </div>
+                    <div id="vedio_box" style="margin-top: 10px;">
+                        <video id="videoplayer1" style="width: 100%; margin: 0 auto;" controls name="media">
+                            <source src="${url}" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+            `;
+
+            const videoBox = document.getElementById('videobox');
+            videoBox.innerHTML = videohtml; // 使用 innerHTML 替代 appendChild
+            videoBox.style.display = 'block';
+        }
+
+        function closevideo() {
+            const videoBox = document.getElementById('videobox');
+            videoBox.innerHTML = ''; // 使用 innerHTML 替代 appendChild
+            videoBox.style.display = 'none';
         }
         
         // 渲染瀑布流
@@ -553,8 +578,7 @@
                     column.appendChild(card);
                 }
             });
-            // 添加视频播放事件
-            setupVideoPlayers();
+   
             
         }
 
