@@ -227,8 +227,14 @@
             left: 50%;
             transform: translate(-50%, -50%);
             padding: 0.3rem;
-             border-radius: 12px;
+            border-radius: 12px;
             width: 90%;
+            
+        }
+        #videoplayer1 {
+            width: 100%;
+            object-fit: contain; 
+            max-height: 600px;
         }
         .close_anniu{
             text-align: right;
@@ -559,7 +565,7 @@
                         <i class="fas fa-remove" onclick="closevideo()"></i>
                     </div>
                     <div id="vedio_box" style="margin-top: 10px;">
-                        <video id="videoplayer1" style="width: 100%; margin: 0 auto;" controls name="media">
+                        <video id="videoplayer1"  controls name="media">
                             <source src="${url}" type="video/mp4">
                         </video>
                     </div>
